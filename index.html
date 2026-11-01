@@ -14,6 +14,19 @@
             color: #e2e8f0;
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
+        #meteorCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .page-content {
+            position: relative;
+            z-index: 1;
+        }
         .glass-card {
             background: rgba(22, 27, 34, 0.85);
             border: 1px solid rgba(48, 54, 61, 0.8);
@@ -22,8 +35,9 @@
     </style>
 </head>
 <body class="min-h-screen p-4 md:p-8">
+    <canvas id="meteorCanvas" aria-hidden="true"></canvas>
 
-    <div class="max-w-6xl mx-auto space-y-6">
+    <div class="page-content max-w-6xl mx-auto space-y-6">
         
         <!-- Top Bar: Header & Language Switcher -->
         <div class="glass-card rounded-2xl p-6 shadow-2xl flex flex-col md:flex-row justify-between items-center gap-4">
@@ -40,6 +54,7 @@
                 <button onclick="setLanguage('ar')" id="btn-ar" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-blue-600 text-white">العربية 🇸🇦</button>
                 <button onclick="setLanguage('en')" id="btn-en" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition text-gray-400 hover:text-white">English 🇬🇧</button>
                 <button onclick="setLanguage('vi')" id="btn-vi" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition text-gray-400 hover:text-white">Tiếng Việt 🇻🇳</button>
+                <button onclick="setLanguage('zh')" id="btn-zh" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition text-gray-400 hover:text-white">中文 🇨🇳</button>
             </div>
         </div>
 
@@ -283,6 +298,30 @@
                 pkgList: "Gói ứng dụng Game:",
                 matList: "Vật phẩm đã mở khóa:",
                 rawJson: "Xem toàn bộ dữ liệu JSON thô"
+            },
+            zh: {
+                title: "高级账户 JSON 数据浏览器",
+                subtitle: "完整提取并解析所有 JSON 数据",
+                searchBtn: "获取数据",
+                loading: "正在处理并解析完整的 JSON 数据...",
+                lvl: "等级",
+                country: "国家/地区",
+                secDevice: "设备与网络信息",
+                devModel: "设备型号：",
+                devRam: "运行内存（RAM）：",
+                devSd: "外部存储：",
+                devRes: "屏幕分辨率：",
+                devOs: "操作系统：",
+                secSecurity: "安全与账户绑定",
+                secPwd: "加密认证密码：",
+                secCreated: "创建时间：",
+                secLogin: "上次登录：",
+                secFreeze: "冻结状态：",
+                secSkins: "皮肤与外观详情",
+                secPkg: "游戏包与已解锁内容",
+                pkgList: "游戏应用包（Packages）：",
+                matList: "已解锁物品（Unlocked Items）：",
+                rawJson: "查看完整的原始 JSON 数据"
             }
         };
 
@@ -292,7 +331,7 @@
             currentLang = lang;
             const html = document.getElementById('htmlTag');
             
-            // RTL for Arabic, LTR for English/Vietnamese
+            // RTL for Arabic, LTR for English/Vietnamese/Chinese
             if (lang === 'ar') {
                 html.setAttribute('dir', 'rtl');
                 html.setAttribute('lang', 'ar');
@@ -302,7 +341,7 @@
             }
 
             // Update Active Buttons
-            ['ar', 'en', 'vi'].forEach(l => {
+            ['ar', 'en', 'vi', 'zh'].forEach(l => {
                 const btn = document.getElementById(`btn-${l}`);
                 if (l === lang) {
                     btn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-blue-600 text-white";
@@ -341,7 +380,10 @@
         function formatDate(timestamp) {
             if (!timestamp) return '---';
             const date = new Date(timestamp * 1000);
-            return date.toLocaleDateString(currentLang === 'ar' ? 'ar-EG' : 'en-US', { 
+            const locale = currentLang === 'ar' ? 'ar-EG'
+                : currentLang === 'zh' ? 'zh-CN'
+                : currentLang === 'vi' ? 'vi-VN' : 'en-US';
+            return date.toLocaleDateString(locale, { 
                 year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
             });
         }
@@ -482,5 +524,78 @@
         // Initialize default view
         setLanguage('ar');
     </script>
+
+    <script>
+    (function(){
+        const canvas=document.getElementById('meteorCanvas');
+        if(!canvas) return;
+        const ctx=canvas.getContext('2d');
+        let W=window.innerWidth,H=window.innerHeight;
+        const meteors=[];
+        const COUNT=35,MAX_SPEED=5,MIN_SPEED=2,TAIL=0.6;
+
+        function resize(){
+            W=window.innerWidth;
+            H=window.innerHeight;
+            canvas.width=W;
+            canvas.height=H;
+        }
+
+        window.addEventListener('resize',resize);
+        resize();
+
+        class Meteor{
+            constructor(){this.reset();}
+            reset(){
+                this.x=Math.random()*W;
+                this.y=Math.random()*H*0.5-H;
+                this.len=20+Math.random()*40;
+                this.sx=(Math.random()-0.5)*2.5+1.5;
+                this.sy=Math.random()*MAX_SPEED+MIN_SPEED;
+                this.op=Math.random()*0.6+0.2;
+            }
+            update(){
+                this.x+=this.sx;
+                this.y+=this.sy;
+                if(this.x>W+100||this.y>H+100||this.x<-100||this.y<-100){
+                    this.reset();
+                    this.x=Math.random()*W;
+                    this.y=-Math.random()*80;
+                }
+            }
+            draw(){
+                const dx=-this.sx*this.len*TAIL;
+                const dy=-this.sy*this.len*TAIL;
+                const grad=ctx.createLinearGradient(this.x,this.y,this.x+dx,this.y+dy);
+                grad.addColorStop(0,`rgba(255,255,200,${this.op})`);
+                grad.addColorStop(1,'rgba(255,180,100,0)');
+                ctx.beginPath();
+                ctx.moveTo(this.x,this.y);
+                ctx.lineTo(this.x+dx,this.y+dy);
+                ctx.lineWidth=2.5;
+                ctx.strokeStyle=grad;
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(this.x,this.y,2,0,Math.PI*2);
+                ctx.fillStyle=`rgba(255,210,130,${this.op+0.2})`;
+                ctx.fill();
+            }
+        }
+
+        for(let i=0;i<COUNT;i++) meteors.push(new Meteor());
+
+        function animate(){
+            ctx.clearRect(0,0,W,H);
+            for(const meteor of meteors){
+                meteor.update();
+                meteor.draw();
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+    })();
+    </script>
+
+
 </body>
 </html>
