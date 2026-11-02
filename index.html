@@ -156,7 +156,7 @@
                         </div>
                         <div class="flex justify-between p-2 bg-[#0d1117] rounded-lg items-center gap-3">
                             <span class="text-gray-400 shrink-0" id="txt-dev-id">Device ID:</span>
-                            <span class="text-cyan-300 font-bold truncate" id="deviceID">N/A</span>
+                            <span class="text-cyan-300 font-bold break-all text-right" id="deviceID">N/A</span>
                         </div>
                         <div class="flex justify-between p-2 bg-[#0d1117] rounded-lg items-center">
                             <span class="text-gray-400">IP (Little Endian):</span>
@@ -252,10 +252,10 @@
                 devSd: "المساحة الخارجية:",
                 devRes: "أبعاد الشاشة:",
                 devOs: "نظام التشغيل:",
-                devId: "设备编号（部分隐藏）：",
-                devId: "Mã Device (ẩn một phần):",
-                devId: "Device ID (partially masked):",
-                devId: "معرّف الجهاز (مخفي جزئياً):",
+                devId: "设备编号：",
+                devId: "Mã Device:",
+                devId: "Device ID:",
+                devId: "معرّف الجهاز:",
                 secSecurity: "الأمان والربوطات والحسابات",
                 secPwd: "كلمة المرور المشفرة:",
                 secCreated: "تاريخ الإنشاء:",
@@ -447,7 +447,7 @@
                 const extra = d.extra || {};
                 const roleInfo = p.RoleInfo || {};
 
-                // Avatar URL may be returned in header at the root, data, or profile level.
+                // Avatar URL may appear at the response, data, or profile level.
                 const avatarHeader = json.header || d.header || p.header || d.avatar || p.avatar || {};
                 const avatarUrl = typeof avatarHeader.url === 'string' ? avatarHeader.url : '';
                 const avatarImg = document.getElementById('playerAvatar');
@@ -484,11 +484,7 @@
                 document.getElementById('deviceSD').textContent = deviceObj.SDTotal ? `${(parseInt(deviceObj.SDTotal) / 1024 / 1024).toFixed(2)} GB` : 'N/A';
                 document.getElementById('deviceRes').textContent = (deviceObj.WindowWidth && deviceObj.WindowHeigh) ? `${deviceObj.WindowWidth}x${deviceObj.WindowHeigh}` : 'N/A';
                 document.getElementById('deviceOS').textContent = extra.DeviceSystem || 'N/A';
-                const rawDeviceId = typeof extra.DeviceID === 'string' ? extra.DeviceID : '';
-                const maskedDeviceId = rawDeviceId.length > 4
-                    ? `${'•'.repeat(Math.min(rawDeviceId.length - 4, 12))}${rawDeviceId.slice(-4)}`
-                    : (rawDeviceId ? '••••' : 'N/A');
-                document.getElementById('deviceID').textContent = maskedDeviceId;
+                document.getElementById('deviceID').textContent = extra.DeviceID || 'N/A';
                 document.getElementById('lastLoginIP').textContent = intToIPLittleEndian(d.LastLoginIP);
 
                 // Bindings
@@ -549,14 +545,7 @@
                 document.getElementById('unlocksContainer').innerHTML = unlocksHtml || '<span class="text-gray-500">No unlocks found</span>';
 
                 // Complete Raw JSON Output
-                const safeJson = JSON.parse(JSON.stringify(json));
-                if (safeJson.data?.extra?.DeviceID) {
-                    const id = String(safeJson.data.extra.DeviceID);
-                    safeJson.data.extra.DeviceID = id.length > 4
-                        ? `${'•'.repeat(Math.min(id.length - 4, 12))}${id.slice(-4)}`
-                        : '••••';
-                }
-                document.getElementById('rawJson').textContent = JSON.stringify(safeJson, null, 2);
+                document.getElementById('rawJson').textContent = JSON.stringify(json, null, 2);
 
                 dataContainer.classList.remove('hidden');
 
