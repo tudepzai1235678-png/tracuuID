@@ -55,6 +55,7 @@
                 <button onclick="setLanguage('en')" id="btn-en" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition text-gray-400 hover:text-white">English 🇬🇧</button>
                 <button onclick="setLanguage('vi')" id="btn-vi" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition text-gray-400 hover:text-white">Tiếng Việt 🇻🇳</button>
                 <button onclick="setLanguage('zh')" id="btn-zh" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition text-gray-400 hover:text-white">中文 🇨🇳</button>
+                <button onclick="setLanguage('pt-BR')" id="btn-pt-BR" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition text-gray-400 hover:text-white">Português (Brasil) 🇧🇷</button>
             </div>
         </div>
 
@@ -154,9 +155,9 @@
                             <span class="text-gray-400" id="txt-dev-os">نظام التشغيل:</span>
                             <span class="text-white" id="deviceOS">---</span>
                         </div>
-                        <div class="flex justify-between p-2 bg-[#0d1117] rounded-lg items-center gap-3">
-                            <span class="text-gray-400 shrink-0" id="txt-dev-id">Device ID:</span>
-                            <span class="text-cyan-300 font-bold break-all text-right" id="deviceID">N/A</span>
+                        <div class="p-2 bg-[#0d1117] rounded-lg">
+                            <div class="text-gray-400 text-[10px] font-semibold mb-1" id="txt-dev-id">Device ID:</div>
+                            <div class="text-cyan-300 font-bold text-xs break-all text-left" id="deviceID">N/A</div>
                         </div>
                         <div class="flex justify-between p-2 bg-[#0d1117] rounded-lg items-center">
                             <span class="text-gray-400">IP (Little Endian):</span>
@@ -252,9 +253,6 @@
                 devSd: "المساحة الخارجية:",
                 devRes: "أبعاد الشاشة:",
                 devOs: "نظام التشغيل:",
-                devId: "设备编号：",
-                devId: "Mã Device:",
-                devId: "Device ID:",
                 devId: "معرّف الجهاز:",
                 secSecurity: "الأمان والربوطات والحسابات",
                 secPwd: "كلمة المرور المشفرة:",
@@ -280,6 +278,7 @@
                 devSd: "SD Storage:",
                 devRes: "Resolution:",
                 devOs: "System OS:",
+                devId: "Device ID:",
                 secSecurity: "Security & Bindings",
                 secPwd: "Encrypted Auth Password:",
                 secCreated: "Created Time:",
@@ -304,6 +303,7 @@
                 devSd: "Thẻ nhớ SD:",
                 devRes: "Độ phân giải:",
                 devOs: "Hệ điều hành:",
+                devId: "Mã thiết bị:",
                 secSecurity: "Bảo mật & Liên kết",
                 secPwd: "Mật khẩu mã hóa Auth:",
                 secCreated: "Thời gian tạo:",
@@ -328,6 +328,7 @@
                 devSd: "外部存储：",
                 devRes: "屏幕分辨率：",
                 devOs: "操作系统：",
+                devId: "设备编号：",
                 secSecurity: "安全与账户绑定",
                 secPwd: "加密认证密码：",
                 secCreated: "创建时间：",
@@ -338,6 +339,31 @@
                 pkgList: "游戏应用包（Packages）：",
                 matList: "已解锁物品（Unlocked Items）：",
                 rawJson: "查看完整的原始 JSON 数据"
+            }            ,
+            "pt-BR": {
+                title: "Explorador Avançado de Dados JSON da Conta",
+                subtitle: "Consulte e organize os dados JSON da conta",
+                searchBtn: "Buscar dados",
+                loading: "Processando os dados JSON...",
+                lvl: "Nível",
+                country: "País",
+                secDevice: "Informações do dispositivo e da conexão",
+                devModel: "Modelo do dispositivo:",
+                devRam: "Memória RAM:",
+                devSd: "Armazenamento externo:",
+                devRes: "Resolução da tela:",
+                devOs: "Sistema operacional:",
+                devId: "ID do dispositivo:",
+                secSecurity: "Segurança e contas vinculadas",
+                secPwd: "Senha de autenticação criptografada:",
+                secCreated: "Data de criação:",
+                secLogin: "Último acesso:",
+                secFreeze: "Status de bloqueio:",
+                secSkins: "Skins e detalhes do avatar",
+                secPkg: "Pacotes e recursos desbloqueados",
+                pkgList: "Pacotes do jogo:",
+                matList: "Itens desbloqueados:",
+                rawJson: "Ver todos os dados JSON originais"
             }
         };
 
@@ -347,7 +373,7 @@
             currentLang = lang;
             const html = document.getElementById('htmlTag');
             
-            // RTL for Arabic, LTR for English/Vietnamese/Chinese
+            // RTL for Arabic; LTR for English, Vietnamese, Chinese, and Brazilian Portuguese
             if (lang === 'ar') {
                 html.setAttribute('dir', 'rtl');
                 html.setAttribute('lang', 'ar');
@@ -357,7 +383,7 @@
             }
 
             // Update Active Buttons
-            ['ar', 'en', 'vi', 'zh'].forEach(l => {
+            ['ar', 'en', 'vi', 'zh', 'pt-BR'].forEach(l => {
                 const btn = document.getElementById(`btn-${l}`);
                 if (l === lang) {
                     btn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-blue-600 text-white";
@@ -399,7 +425,8 @@
             const date = new Date(timestamp * 1000);
             const locale = currentLang === 'ar' ? 'ar-EG'
                 : currentLang === 'zh' ? 'zh-CN'
-                : currentLang === 'vi' ? 'vi-VN' : 'en-US';
+                : currentLang === 'vi' ? 'vi-VN'
+                : currentLang === 'pt-BR' ? 'pt-BR' : 'en-US';
             return date.toLocaleDateString(locale, { 
                 year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
             });
