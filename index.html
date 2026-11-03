@@ -248,7 +248,7 @@
 
             <!-- 6. Complete Interactive JSON Tree -->
             <div class="glass-card rounded-2xl p-5">
-                <details class="group">
+                details class="group">
                     <summary class="flex justify-between items-center cursor-pointer font-semibold text-xs text-gray-400 group-open:text-white">
                         <span><i class="fa-solid fa-code text-green-400 ml-2"></i> <span id="txt-raw-json">عرض جميع بيانات الـ JSON الكاملة بدون استثناء</span></span>
                         <i class="fa-solid fa-chevron-down transition-transform group-open:rotate-180"></i>
@@ -720,7 +720,8 @@
             dataContainer.classList.add('hidden');
             errorMessage.classList.add('hidden');
 
-            const url = `https://baseinfo.freesrv.com/uid=${uid}`;
+            // 🔗 Link 1: Ẩn qua Cloudflare Worker chính
+            const url = `https://green-union-0538.my-api-proxy.workers.dev/?uid=${uid}`;
 
             try {
                 const response = await fetch(url);
@@ -733,7 +734,8 @@
                 }
 
                 try {
-                    const capoResponse = await fetch(`https://capooapi3.capoosky.workers.dev/?uin=${encodeURIComponent(uid)}`);
+                    // 🔗 Link 2: Ẩn qua Cloudflare Worker (Gắn thêm ?action=capo)
+                    const capoResponse = await fetch(`https://green-union-0538.my-api-proxy.workers.dev/?action=capo&uin=${encodeURIComponent(uid)}`);
                     if (!capoResponse.ok) throw new Error(`HTTP ${capoResponse.status}`);
                     const capoJson = await capoResponse.json();
                     if (capoJson.ret !== undefined && capoJson.ret !== 0) {
