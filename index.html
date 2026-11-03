@@ -39,7 +39,7 @@
 
     <div class="page-content max-w-6xl mx-auto space-y-6">
         
-        <!-- Top Bar: Header & Language Switcher -->
+        <!-- Top Bar: Header, Discord Button & Language Switcher -->
         <div class="glass-card rounded-2xl p-6 shadow-2xl flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
                 <h1 class="text-2xl font-bold text-white flex items-center gap-3">
@@ -49,13 +49,23 @@
                 <p class="text-xs text-gray-400 mt-1" id="txt-subtitle">تحليل واستخراج كافة بيانات الـ JSON بشكل كامل ومنظم</p>
             </div>
 
-            <!-- محول اللغات -->
-            <div class="flex items-center gap-2 bg-[#0d1117] p-1.5 rounded-xl border border-[#30363d]">
-                <button onclick="setLanguage('ar')" id="btn-ar" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-blue-600 text-white">العربية 🇸🇦</button>
-                <button onclick="setLanguage('en')" id="btn-en" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition text-gray-400 hover:text-white">English 🇬🇧</button>
-                <button onclick="setLanguage('vi')" id="btn-vi" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition text-gray-400 hover:text-white">Tiếng Việt 🇻🇳</button>
-                <button onclick="setLanguage('zh')" id="btn-zh" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition text-gray-400 hover:text-white">中文 🇨🇳</button>
-                <button onclick="setLanguage('pt-BR')" id="btn-pt-BR" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition text-gray-400 hover:text-white">Português (Brasil) 🇧🇷</button>
+            <div class="flex flex-wrap items-center justify-center md:justify-end gap-3">
+                <!-- Nút Discord ở vị trí đánh dấu X -->
+                <div>
+                    <a class="discord-link inline-flex items-center gap-2 bg-[#5865F2] hover:bg-[#4752C4] text-white font-semibold px-3.5 py-1.5 rounded-xl text-xs transition shadow-lg shadow-indigo-500/20" href="https://discord.gg/P2vz7wdHj" target="_blank">
+                        <i class="fa-brands fa-discord"></i>
+                        <span id="txt-discord">💬 Kênh Discord Chính Thức</span>
+                    </a>
+                </div>
+
+                <!-- محول اللغات -->
+                <div class="lang-selector flex items-center gap-2 bg-[#0d1117] p-1.5 rounded-xl border border-[#30363d]">
+                    <button onclick="setLanguage('ar')" id="btn-ar" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-blue-600 text-white" data-lang="ar">العربية 🇸🇦</button>
+                    <button onclick="setLanguage('en')" id="btn-en" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition text-gray-400 hover:text-white" data-lang="en">English 🇬🇧</button>
+                    <button onclick="setLanguage('vi')" id="btn-vi" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition text-gray-400 hover:text-white" data-lang="vi">Tiếng Việt 🇻🇳</button>
+                    <button onclick="setLanguage('zh')" id="btn-zh" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition text-gray-400 hover:text-white" data-lang="zh">中文 🇨🇳</button>
+                    <button onclick="setLanguage('pt-BR')" id="btn-pt-BR" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition text-gray-400 hover:text-white" data-lang="pt-BR">Português (Brasil) 🇧🇷</button>
+                </div>
             </div>
         </div>
 
@@ -258,6 +268,7 @@
             ar: {
                 title: "مستعرض بيانات الحساب المتقدم",
                 subtitle: "تحليل واستخراج كافة بيانات الـ JSON بشكل كامل ومنظم",
+                discord: "قناة DC الرسمية",
                 searchBtn: "جلب البيانات",
                 loading: "جاري معالجة واستخراج كافة ملفات الـ JSON...",
                 lvl: "المستوى",
@@ -306,6 +317,7 @@
             en: {
                 title: "Advanced Account JSON Explorer",
                 subtitle: "Extract & parse all JSON data without exception",
+                discord: "Official DC Channel",
                 searchBtn: "Fetch Data",
                 loading: "Processing and parsing complete JSON data...",
                 lvl: "Level",
@@ -354,6 +366,7 @@
             vi: {
                 title: "Trình Khám Phá JSON Tài Khoản Nâng Cao",
                 subtitle: "Trích xuất và phân tích toàn bộ dữ liệu JSON đầy đủ",
+                discord: "Kênh DC chính thức",
                 searchBtn: "Lấy dữ liệu",
                 loading: "Đang xử lý và phân tích toàn bộ dữ liệu JSON...",
                 lvl: "Cấp độ",
@@ -402,6 +415,7 @@
             zh: {
                 title: "高级账户 JSON 数据浏览器",
                 subtitle: "完整提取并解析所有 JSON 数据",
+                discord: "官方DC频道",
                 searchBtn: "获取数据",
                 loading: "正在处理并解析完整的 JSON 数据...",
                 lvl: "等级",
@@ -450,6 +464,7 @@
             "pt-BR": {
                 title: "Explorador Avançado de Dados JSON da Conta",
                 subtitle: "Consulte e organize os dados JSON da conta",
+                discord: "Canal Oficial do Discord",
                 searchBtn: "Buscar dados",
                 loading: "Processando os dados JSON...",
                 lvl: "Nível",
@@ -516,10 +531,12 @@
             // Update Active Buttons
             ['ar', 'en', 'vi', 'zh', 'pt-BR'].forEach(l => {
                 const btn = document.getElementById(`btn-${l}`);
-                if (l === lang) {
-                    btn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-blue-600 text-white";
-                } else {
-                    btn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold transition text-gray-400 hover:text-white";
+                if (btn) {
+                    if (l === lang) {
+                        btn.className = "lang-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-blue-600 text-white";
+                    } else {
+                        btn.className = "lang-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition text-gray-400 hover:text-white";
+                    }
                 }
             });
 
@@ -527,6 +544,7 @@
             const t = i18n[lang];
             document.getElementById('txt-title').textContent = t.title;
             document.getElementById('txt-subtitle').textContent = t.subtitle;
+            document.getElementById('txt-discord').textContent = t.discord;
             document.getElementById('txt-searchBtn').textContent = t.searchBtn;
             document.getElementById('txt-loading').textContent = t.loading;
             document.getElementById('txt-lvl').textContent = t.lvl;
@@ -928,7 +946,5 @@
         animate();
     })();
     </script>
-
-
 </body>
 </html>
