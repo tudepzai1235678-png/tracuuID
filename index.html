@@ -236,7 +236,22 @@
                 </div>
             </div>
 
-            <!-- 6. Complete Interactive JSON Tree -->
+
+            <!-- 6. Additional public profile data from Capo API -->
+            <div class="glass-card rounded-2xl p-5 space-y-3">
+                <div class="flex items-center justify-between border-b border-[#30363d] pb-2">
+                    <h3 class="text-sm font-semibold text-amber-400 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-plus"></i>
+                        <span>Capo API — Additional Profile Info</span>
+                    </h3>
+                    <span id="capoStatus" class="text-xs text-gray-400">Waiting...</span>
+                </div>
+                <div id="capoInfoContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 text-xs">
+                    <p class="text-gray-500">Search a UID to load extra profile information.</p>
+                </div>
+            </div>
+
+            <!-- 7. Complete Interactive JSON Tree -->
             <div class="glass-card rounded-2xl p-5">
                 <details class="group">
                     <summary class="flex justify-between items-center cursor-pointer font-semibold text-xs text-gray-400 group-open:text-white">
@@ -576,6 +591,87 @@
             });
         }
 
+
+        // Display only non-sensitive public/profile fields returned by Capo.
+        // Passwords, device identifiers, contact details and IP addresses are not shown here.
+        function renderCapoInfo(capoJson) {
+            const container = document.getElementById('capoInfoContainer');
+            const status = document.getElementById('capoStatus');
+            container.replaceChildren();
+
+            const profile = capoJson?.profile || {};
+            const role = profile.RoleInfo || {};
+            const relation = profile.relation || {};
+            const permission = profile.permission || {};
+
+            const fields = [
+                ['Popularity', capoJson?.popularity],
+                ['Close upload flag', capoJson?.close_upload],
+                ['Close map upload flag', capoJson?.close_upload_map],
+                ['Country code', profile.country],
+                ['Head frame ID', profile.head_frame_id],
+                ['Head ID', role.head_id],
+                ['Model code', role.Model],
+                ['Skin ID', role.SkinID],
+                ['Head unlocked', profile.head_unlock],
+                ['Profile display permission', permission.display],
+                ['Show country flag', profile.show_country],
+                ['Gender code', profile.gender],
+                ['Language code', profile.lang],
+                ['Friends in common', relation.friend_eachother],
+                ['Following count', relation.friend_attention],
+                ['Followers count', relation.friend_beattention],
+                ['Download count', profile.all_download_count],
+                ['Mood icon code', profile.mood_icon],
+                ['Unlocked materials count', profile.mat_unlock_list && typeof profile.mat_unlock_list === 'object'
+                    ? Object.keys(profile.mat_unlock_list).length : undefined],
+                ['Last download time', profile.all_download_st ? formatDate(profile.all_download_st) : undefined],
+                ['Profile timestamp', profile._t_ ? formatDate(profile._t_) : undefined]
+            ];
+
+            let shown = 0;
+            for (const [label, value] of fields) {
+                if (value === undefined || value === null || value === '') continue;
+
+                const card = document.createElement('div');
+                card.className = 'p-3 bg-[#0d1117] rounded-lg border border-[#30363d] min-w-0';
+
+                const labelNode = document.createElement('div');
+                labelNode.className = 'text-gray-400 mb-1';
+                labelNode.textContent = label;
+
+                const valueNode = document.createElement('div');
+                valueNode.className = 'text-amber-300 font-semibold break-words';
+                valueNode.textContent = String(value);
+
+                card.append(labelNode, valueNode);
+                container.appendChild(card);
+                shown++;
+            }
+
+            if (!shown) {
+                const empty = document.createElement('p');
+                empty.className = 'text-gray-500';
+                empty.textContent = 'Capo API returned no additional displayable fields.';
+                container.appendChild(empty);
+            }
+
+            status.textContent = 'Loaded';
+            status.className = 'text-xs text-emerald-400';
+        }
+
+        function renderCapoError(message) {
+            const container = document.getElementById('capoInfoContainer');
+            const status = document.getElementById('capoStatus');
+            container.replaceChildren();
+            const error = document.createElement('p');
+            error.className = 'text-red-400';
+            error.textContent = `Capo API unavailable: ${message}`;
+            container.appendChild(error);
+            status.textContent = 'Unavailable';
+            status.className = 'text-xs text-red-400';
+        }
+
         async function fetchUIDData() {
             const uid = document.getElementById('uidInput').value.trim();
             const loading = document.getElementById('loading');
@@ -601,6 +697,20 @@
 
                 if (json.code !== 0 || !json.data) {
                     throw new Error('UID not found or invalid response.');
+                }
+
+                // Fetch additional public profile fields from Capo API.
+                try {
+                    const capoResponse = await fetch(`https://capooapi3.capoosky.workers.dev/?uin=${encodeURIComponent(uid)}`);
+                    if (!capoResponse.ok) throw new Error(`HTTP ${capoResponse.status}`);
+                    const capoJson = await capoResponse.json();
+                    if (capoJson.ret !== undefined && capoJson.ret !== 0) {
+                        throw new Error(`API returned code ${capoJson.ret}`);
+                    }
+                    renderCapoInfo(capoJson);
+                } catch (capoError) {
+                    console.warn('Capo API request failed:', capoError);
+                    renderCapoError(capoError.message || 'Request failed');
                 }
 
                 const d = json.data;
