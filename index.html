@@ -232,23 +232,23 @@
 
             </div>
 
-            <!-- 5. Additional public profile data from Capo API -->
+            <!-- 5. Additional public profile data -->
             <div class="glass-card rounded-2xl p-5 space-y-3">
                 <div class="flex items-center justify-between border-b border-[#30363d] pb-2">
                     <h3 class="text-sm font-semibold text-amber-400 flex items-center gap-2">
                         <i class="fa-solid fa-circle-plus"></i>
                         <span id="txt-additional-profile-info">Additional Profile Info</span>
                     </h3>
-                    <span id="capoStatus" class="text-xs text-gray-400">Waiting...</span>
+                    <span id="extraStatus" class="text-xs text-gray-400">Waiting...</span>
                 </div>
-                <div id="capoInfoContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 text-xs">
+                <div id="extraInfoContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 text-xs">
                     <p class="text-gray-500">Search a UID to load extra profile information.</p>
                 </div>
             </div>
 
             <!-- 6. Complete Interactive JSON Tree -->
             <div class="glass-card rounded-2xl p-5">
-                details class="group">
+                <details class="group">
                     <summary class="flex justify-between items-center cursor-pointer font-semibold text-xs text-gray-400 group-open:text-white">
                         <span><i class="fa-solid fa-code text-green-400 ml-2"></i> <span id="txt-raw-json">عرض جميع بيانات الـ JSON الكاملة بدون استثناء</span></span>
                         <i class="fa-solid fa-chevron-down transition-transform group-open:rotate-180"></i>
@@ -290,7 +290,7 @@
                 matList: "العناصر المفتوحة (Unlocked Items):",
                 rawJson: "عرض جميع بيانات الـ JSON الكاملة بدون استثناء",
                 additionalProfileInfo: "معلومات إضافية عن الملف الشخصي",
-                capoFields: {
+                extraFields: {
                     popularity: "الشعبية",
                     closeUpload: "حالة إغلاق رفع المحتوى",
                     closeMapUpload: "حالة إغلاق رفع الخريطة",
@@ -339,7 +339,7 @@
                 matList: "Unlocked Material List:",
                 rawJson: "View Complete Raw JSON Data",
                 additionalProfileInfo: "Additional Profile Info",
-                capoFields: {
+                extraFields: {
                     popularity: "Popularity",
                     closeUpload: "Close upload flag",
                     closeMapUpload: "Close map upload flag",
@@ -388,7 +388,7 @@
                 matList: "Vật phẩm đã mở khóa:",
                 rawJson: "Xem toàn bộ dữ liệu JSON thô",
                 additionalProfileInfo: "Thông tin hồ sơ bổ sung",
-                capoFields: {
+                extraFields: {
                     popularity: "Độ phổ biến",
                     closeUpload: "Trạng thái đóng tải lên",
                     closeMapUpload: "Trạng thái đóng tải bản đồ",
@@ -437,7 +437,7 @@
                 matList: "已解锁物品（Unlocked Items）：",
                 rawJson: "查看完整的原始 JSON 数据",
                 additionalProfileInfo: "其他资料信息",
-                capoFields: {
+                extraFields: {
                     popularity: "人气值",
                     closeUpload: "关闭上传标记",
                     closeMapUpload: "关闭地图上传标记",
@@ -486,7 +486,7 @@
                 matList: "Itens desbloqueados:",
                 rawJson: "Ver todos os dados JSON originais",
                 additionalProfileInfo: "Informações adicionais do perfil",
-                capoFields: {
+                extraFields: {
                     popularity: "Popularidade",
                     closeUpload: "Indicador de envio fechado",
                     closeMapUpload: "Indicador de envio de mapas fechado",
@@ -512,7 +512,7 @@
         };
 
         let currentLang = 'ar';
-        let currentCapoJson = null;
+        let currentExtraJson = null;
 
         function setLanguage(lang) {
             currentLang = lang;
@@ -563,7 +563,7 @@
             document.getElementById('txt-mat-list').textContent = t.matList;
             document.getElementById('txt-raw-json').textContent = t.rawJson;
             document.getElementById('txt-additional-profile-info').textContent = t.additionalProfileInfo;
-            if (currentCapoJson) renderCapoInfo(currentCapoJson);
+            if (currentExtraJson) renderExtraInfo(currentExtraJson);
         }
 
         function formatDate(timestamp) {
@@ -607,31 +607,31 @@
             }
 
             const label = symbol === '♂'
-                ? i18n[currentLang].capoFields.male
-                : i18n[currentLang].capoFields.female;
+                ? i18n[currentLang].extraFields.male
+                : i18n[currentLang].extraFields.female;
             badge.className = `text-base font-bold ${symbol === '♂' ? 'text-blue-400' : 'text-pink-400'}`;
             badge.textContent = symbol;
             badge.setAttribute('aria-label', label);
             badge.title = label;
         }
 
-        function renderCapoInfo(capoJson) {
-            currentCapoJson = capoJson;
-            const container = document.getElementById('capoInfoContainer');
-            const status = document.getElementById('capoStatus');
+        function renderExtraInfo(extraJson) {
+            currentExtraJson = extraJson;
+            const container = document.getElementById('extraInfoContainer');
+            const status = document.getElementById('extraStatus');
             container.replaceChildren();
 
-            const profile = capoJson?.profile || {};
+            const profile = extraJson?.profile || {};
             const role = profile.RoleInfo || {};
             const relation = profile.relation || {};
             const permission = profile.permission || {};
-            const labels = i18n[currentLang].capoFields;
+            const labels = i18n[currentLang].extraFields;
             updateGenderBadge(profile.gender);
 
             const fields = [
-                [labels.popularity, capoJson?.popularity],
-                [labels.closeUpload, capoJson?.close_upload],
-                [labels.closeMapUpload, capoJson?.close_upload_map],
+                [labels.popularity, extraJson?.popularity],
+                [labels.closeUpload, extraJson?.close_upload],
+                [labels.closeMapUpload, extraJson?.close_upload_map],
                 [labels.headFrameId, profile.head_frame_id],
                 [labels.headId, role.head_id],
                 [labels.modelCode, role.Model],
@@ -682,7 +682,7 @@
             if (!shown) {
                 const empty = document.createElement('p');
                 empty.className = 'text-gray-500';
-                empty.textContent = 'Capo API returned no additional displayable fields.';
+                empty.textContent = 'Extra API returned no additional displayable fields.';
                 container.appendChild(empty);
             }
 
@@ -690,15 +690,15 @@
             status.className = 'text-xs text-emerald-400';
         }
 
-        function renderCapoError(message) {
-            currentCapoJson = null;
+        function renderExtraError(message) {
+            currentExtraJson = null;
             updateGenderBadge(null);
-            const container = document.getElementById('capoInfoContainer');
-            const status = document.getElementById('capoStatus');
+            const container = document.getElementById('extraInfoContainer');
+            const status = document.getElementById('extraStatus');
             container.replaceChildren();
             const error = document.createElement('p');
             error.className = 'text-red-400';
-            error.textContent = `Capo API unavailable: ${message}`;
+            error.textContent = `Extra API unavailable: ${message}`;
             container.appendChild(error);
             status.textContent = 'Unavailable';
             status.className = 'text-xs text-red-400';
@@ -720,7 +720,7 @@
             dataContainer.classList.add('hidden');
             errorMessage.classList.add('hidden');
 
-            // 🔗 Link 1: Ẩn qua Cloudflare Worker chính
+            // 🔗 Link Worker chính
             const url = `https://green-union-0538.my-api-proxy.workers.dev/?uid=${uid}`;
 
             try {
@@ -734,17 +734,17 @@
                 }
 
                 try {
-                    // 🔗 Link 2: Ẩn qua Cloudflare Worker (Gắn thêm ?action=capo)
-                    const capoResponse = await fetch(`https://green-union-0538.my-api-proxy.workers.dev/?action=capo&uin=${encodeURIComponent(uid)}`);
-                    if (!capoResponse.ok) throw new Error(`HTTP ${capoResponse.status}`);
-                    const capoJson = await capoResponse.json();
-                    if (capoJson.ret !== undefined && capoJson.ret !== 0) {
-                        throw new Error(`API returned code ${capoJson.ret}`);
+                    // 🔗 Link Worker phụ (gọi thông tin bổ sung qua action)
+                    const extraResponse = await fetch(`https://green-union-0538.my-api-proxy.workers.dev/?action=capo&uin=${encodeURIComponent(uid)}`);
+                    if (!extraResponse.ok) throw new Error(`HTTP ${extraResponse.status}`);
+                    const extraJson = await extraResponse.json();
+                    if (extraJson.ret !== undefined && extraJson.ret !== 0) {
+                        throw new Error(`API returned code ${extraJson.ret}`);
                     }
-                    renderCapoInfo(capoJson);
-                } catch (capoError) {
-                    console.warn('Capo API request failed:', capoError);
-                    renderCapoError(capoError.message || 'Request failed');
+                    renderExtraInfo(extraJson);
+                } catch (extraError) {
+                    console.warn('Extra API request failed:', extraError);
+                    renderExtraError(extraError.message || 'Request failed');
                 }
 
                 const d = json.data;
