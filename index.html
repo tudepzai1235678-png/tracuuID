@@ -222,7 +222,21 @@
 
             </div>
 
-            <!-- 5. Complete Interactive JSON Tree -->
+            <!-- 5. Friends List -->
+            <div class="glass-card rounded-2xl p-5 space-y-3">
+                <div class="flex items-center justify-between border-b border-[#30363d] pb-2">
+                    <h3 class="text-sm font-semibold text-cyan-400 flex items-center gap-2">
+                        <i class="fa-solid fa-user-group"></i>
+                        <span id="txt-sec-friends">Friends List</span>
+                    </h3>
+                    <span id="friendsCount" class="text-xs text-gray-400">0</span>
+                </div>
+                <div id="friendsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    <p id="friendsEmpty" class="text-gray-500 text-center py-3">No friend list was returned by the API.</p>
+                </div>
+            </div>
+
+            <!-- 6. Complete Interactive JSON Tree -->
             <div class="glass-card rounded-2xl p-5">
                 <details class="group">
                     <summary class="flex justify-between items-center cursor-pointer font-semibold text-xs text-gray-400 group-open:text-white">
@@ -263,7 +277,9 @@
                 secPkg: "الحزم والميزات المفتوحة",
                 pkgList: "تطبيقات/حزم اللعبة (Packages):",
                 matList: "العناصر المفتوحة (Unlocked Items):",
-                rawJson: "عرض جميع بيانات الـ JSON الكاملة بدون استثناء"
+                rawJson: "عرض جميع بيانات الـ JSON الكاملة بدون استثناء",
+                secFriends: "قائمة الأصدقاء",
+                friendsEmpty: "لم تُرجع واجهة API قائمة الأصدقاء."
             },
             en: {
                 title: "Advanced Account JSON Explorer",
@@ -288,7 +304,9 @@
                 secPkg: "Packages & Unlocks",
                 pkgList: "Game Packages:",
                 matList: "Unlocked Material List:",
-                rawJson: "View Complete Raw JSON Data"
+                rawJson: "View Complete Raw JSON Data",
+                secFriends: "Friends List",
+                friendsEmpty: "The API did not return a friends list."
             },
             vi: {
                 title: "Trình Khám Phá JSON Tài Khoản Nâng Cao",
@@ -313,7 +331,9 @@
                 secPkg: "Gói ứng dụng & Mở khóa",
                 pkgList: "Gói ứng dụng Game:",
                 matList: "Vật phẩm đã mở khóa:",
-                rawJson: "Xem toàn bộ dữ liệu JSON thô"
+                rawJson: "Xem toàn bộ dữ liệu JSON thô",
+                secFriends: "Danh sách bạn bè",
+                friendsEmpty: "API không trả về danh sách bạn bè."
             },
             zh: {
                 title: "高级账户 JSON 数据浏览器",
@@ -338,7 +358,9 @@
                 secPkg: "游戏包与已解锁内容",
                 pkgList: "游戏应用包（Packages）：",
                 matList: "已解锁物品（Unlocked Items）：",
-                rawJson: "查看完整的原始 JSON 数据"
+                rawJson: "查看完整的原始 JSON 数据",
+                secFriends: "好友列表",
+                friendsEmpty: "API 未返回好友列表。"
             }            ,
             "pt-BR": {
                 title: "Explorador Avançado de Dados JSON da Conta",
@@ -363,7 +385,9 @@
                 secPkg: "Pacotes e recursos desbloqueados",
                 pkgList: "Pacotes do jogo:",
                 matList: "Itens desbloqueados:",
-                rawJson: "Ver todos os dados JSON originais"
+                rawJson: "Ver todos os dados JSON originais",
+                secFriends: "Lista de amigos",
+                friendsEmpty: "A API não retornou uma lista de amigos."
             }
         };
 
@@ -417,6 +441,9 @@
             document.getElementById('txt-pkg-list').textContent = t.pkgList;
             document.getElementById('txt-mat-list').textContent = t.matList;
             document.getElementById('txt-raw-json').textContent = t.rawJson;
+            document.getElementById('txt-sec-friends').textContent = t.secFriends;
+            const friendsEmptyLabel = document.getElementById('friendsEmpty');
+            if (friendsEmptyLabel) friendsEmptyLabel.textContent = t.friendsEmpty;
         }
 
         // Convert Timestamp to readable Date
@@ -440,6 +467,113 @@
             const b2 = (intIP >> 16) & 0xFF;
             const b3 = (intIP >> 24) & 0xFF;
             return `${b0}.${b1}.${b2}.${b3}`;
+        }
+
+
+        function findFriendsArray(root) {
+            const friendKeys = new Set([
+                'friends', 'friendlist', 'friendslist', 'friend_list',
+                'friend_list_info', 'friendinfo', 'friendlistdata',
+                'friendinfolist', 'friendinfolistdata'
+            ]);
+            const visited = new Set();
+
+            function walk(node, depth) {
+                if (!node || typeof node !== 'object' || depth > 8 || visited.has(node)) return null;
+                visited.add(node);
+
+                if (Array.isArray(node)) return null;
+
+                for (const [key, value] of Object.entries(node)) {
+                    const normalized = key.toLowerCase().replace(/[^a-z]/g, '');
+                    const normalizedKeys = new Set([...friendKeys].map(k => k.replace(/[^a-z]/g, '')));
+                    if (normalizedKeys.has(normalized)) {
+                        if (Array.isArray(value)) return value;
+                        if (value && typeof value === 'object') {
+                            for (const listKey of ['list', 'List', 'data', 'Data', 'items', 'Items', 'rows', 'Rows']) {
+                                if (Array.isArray(value[listKey])) return value[listKey];
+                            }
+                            const nested = walk(value, depth + 1);
+                            if (nested) return nested;
+                        }
+                    }
+                }
+
+                for (const value of Object.values(node)) {
+                    if (value && typeof value === 'object') {
+                        const found = walk(value, depth + 1);
+                        if (found) return found;
+                    }
+                }
+                return null;
+            }
+            return walk(root, 0);
+        }
+
+        function renderFriends(json) {
+            const container = document.getElementById('friendsContainer');
+            const count = document.getElementById('friendsCount');
+            container.replaceChildren();
+
+            const friends = findFriendsArray(json);
+            if (!Array.isArray(friends) || friends.length === 0) {
+                count.textContent = '0';
+                const empty = document.createElement('p');
+                empty.id = 'friendsEmpty';
+                empty.className = 'text-gray-500 text-center py-3';
+                empty.textContent = i18n[currentLang].friendsEmpty;
+                container.appendChild(empty);
+                return;
+            }
+
+            count.textContent = String(friends.length);
+            friends.forEach((friend, index) => {
+                const item = document.createElement('div');
+                item.className = 'p-3 bg-[#0d1117] rounded-xl border border-[#30363d] flex items-center gap-3 min-w-0';
+
+                const details = document.createElement('div');
+                details.className = 'min-w-0 flex-1';
+
+                const name = friend && typeof friend === 'object'
+                    ? (friend.NickName || friend.nickname || friend.nickName || friend.name || friend.Name || friend.nick || friend.Nick || `Friend ${index + 1}`)
+                    : String(friend);
+                const uid = friend && typeof friend === 'object'
+                    ? (friend.UIN || friend.uin || friend.UID || friend.uid || friend.UserID || friend.userId || friend.id || '')
+                    : '';
+
+                const nameNode = document.createElement('div');
+                nameNode.className = 'text-white font-semibold truncate';
+                nameNode.textContent = String(name);
+                details.appendChild(nameNode);
+
+                if (uid !== '') {
+                    const uidNode = document.createElement('div');
+                    uidNode.className = 'text-gray-500 font-mono text-[10px] truncate';
+                    uidNode.textContent = `UID: ${uid}`;
+                    details.appendChild(uidNode);
+                }
+
+                const avatarUrl = friend && typeof friend === 'object'
+                    ? (friend.avatarUrl || friend.AvatarUrl || friend.avatar || friend.headUrl || friend.HeadUrl || friend.header?.url || '')
+                    : '';
+                if (typeof avatarUrl === 'string' && /^https?:\/\//i.test(avatarUrl)) {
+                    const avatar = document.createElement('img');
+                    avatar.src = avatarUrl;
+                    avatar.alt = 'Friend avatar';
+                    avatar.referrerPolicy = 'no-referrer';
+                    avatar.className = 'w-9 h-9 rounded-full object-cover border border-[#30363d] shrink-0';
+                    avatar.onerror = () => avatar.remove();
+                    item.appendChild(avatar);
+                } else {
+                    const avatarFallback = document.createElement('div');
+                    avatarFallback.className = 'w-9 h-9 rounded-full bg-[#1f2937] flex items-center justify-center text-gray-400 shrink-0';
+                    avatarFallback.innerHTML = '<i class="fa-solid fa-user"></i>';
+                    item.appendChild(avatarFallback);
+                }
+
+                item.appendChild(details);
+                container.appendChild(item);
+            });
         }
 
         async function fetchUIDData() {
@@ -498,7 +632,8 @@
                 document.getElementById('nickname').textContent = roleInfo.NickName || d.RoleInfo?.NickName || 'No Name';
                 document.getElementById('moodText').textContent = p.mood_text ? `"${p.mood_text}"` : 'No mood status';
                 document.getElementById('level').textContent = d.level || 0;
-                document.getElementById('country').textContent = extra.Country || d.bind_country || p.country || 'N/A';
+                document.getElementById('country').textContent =
+                    extra.Country ?? extra.country ?? d.Country ?? p.Country ?? d.bind_country ?? p.country ?? 'N/A';
                 document.getElementById('minibean').textContent = d.minibean || 0;
                 document.getElementById('minicoin').textContent = d.minicoin || 0;
 
@@ -570,6 +705,8 @@
                     }
                 }
                 document.getElementById('unlocksContainer').innerHTML = unlocksHtml || '<span class="text-gray-500">No unlocks found</span>';
+
+                renderFriends(json);
 
                 // Complete Raw JSON Output
                 document.getElementById('rawJson').textContent = JSON.stringify(json, null, 2);
