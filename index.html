@@ -100,6 +100,7 @@
                     <div class="flex items-center gap-3 flex-wrap">
                         <h2 class="text-2xl font-bold text-white" id="nickname">---</h2>
                         <span class="bg-blue-500/20 text-blue-400 text-xs px-2.5 py-1 rounded-full font-mono" id="displayUid">UID: ---</span>
+                        <span id="genderBadge" class="hidden text-base font-bold" aria-label=""></span>
                     </div>
                     <p class="text-gray-400 text-xs mt-2 italic" id="moodText">"---"</p>
                     </div>
@@ -300,16 +301,15 @@
                     popularity: "الشعبية",
                     closeUpload: "حالة إغلاق رفع المحتوى",
                     closeMapUpload: "حالة إغلاق رفع الخريطة",
-                    countryCode: "رمز الدولة",
                     headFrameId: "معرّف إطار الصورة الشخصية",
                     headId: "معرّف الرأس",
                     modelCode: "رمز النموذج",
                     skinId: "معرّف المظهر",
                     headUnlocked: "حالة فتح الرأس",
                     profileDisplayPermission: "صلاحية عرض الملف الشخصي",
-                    showCountryFlag: "عرض علم الدولة",
-                    genderCode: "رمز الجنس",
-                    languageCode: "رمز اللغة",
+                    gender: "الجنس",
+                    male: "ذكر",
+                    female: "أنثى",
                     friendsInCommon: "الأصدقاء المشتركون",
                     followingCount: "عدد المتابَعين",
                     followersCount: "عدد المتابعين",
@@ -351,16 +351,15 @@
                     popularity: "Popularity",
                     closeUpload: "Close upload flag",
                     closeMapUpload: "Close map upload flag",
-                    countryCode: "Country code",
                     headFrameId: "Head frame ID",
                     headId: "Head ID",
                     modelCode: "Model code",
                     skinId: "Skin ID",
                     headUnlocked: "Head unlocked",
                     profileDisplayPermission: "Profile display permission",
-                    showCountryFlag: "Show country flag",
-                    genderCode: "Gender code",
-                    languageCode: "Language code",
+                    gender: "Gender",
+                    male: "Male",
+                    female: "Female",
                     friendsInCommon: "Friends in common",
                     followingCount: "Following count",
                     followersCount: "Followers count",
@@ -402,16 +401,15 @@
                     popularity: "Độ phổ biến",
                     closeUpload: "Trạng thái đóng tải lên",
                     closeMapUpload: "Trạng thái đóng tải bản đồ",
-                    countryCode: "Mã quốc gia",
                     headFrameId: "Mã khung đại diện",
                     headId: "Mã đầu",
                     modelCode: "Mã mẫu",
                     skinId: "Mã trang phục",
                     headUnlocked: "Trạng thái mở khóa kiểu đầu",
                     profileDisplayPermission: "Quyền hiển thị hồ sơ",
-                    showCountryFlag: "Hiển thị cờ quốc gia",
-                    genderCode: "Mã giới tính",
-                    languageCode: "Mã ngôn ngữ",
+                    gender: "Giới tính",
+                    male: "Nam",
+                    female: "Nữ",
                     friendsInCommon: "Bạn chung",
                     followingCount: "Số người đang theo dõi",
                     followersCount: "Số người theo dõi",
@@ -453,16 +451,15 @@
                     popularity: "人气值",
                     closeUpload: "关闭上传标记",
                     closeMapUpload: "关闭地图上传标记",
-                    countryCode: "国家/地区代码",
                     headFrameId: "头像框 ID",
                     headId: "头部 ID",
                     modelCode: "模型代码",
                     skinId: "皮肤 ID",
                     headUnlocked: "头部是否已解锁",
                     profileDisplayPermission: "资料显示权限",
-                    showCountryFlag: "显示国家/地区旗帜",
-                    genderCode: "性别代码",
-                    languageCode: "语言代码",
+                    gender: "性别",
+                    male: "男性",
+                    female: "女性",
                     friendsInCommon: "共同好友数",
                     followingCount: "关注人数",
                     followersCount: "粉丝数",
@@ -504,16 +501,15 @@
                     popularity: "Popularidade",
                     closeUpload: "Indicador de envio fechado",
                     closeMapUpload: "Indicador de envio de mapas fechado",
-                    countryCode: "Código do país",
                     headFrameId: "ID da moldura do avatar",
                     headId: "ID da cabeça",
                     modelCode: "Código do modelo",
                     skinId: "ID da skin",
                     headUnlocked: "Cabeça desbloqueada",
                     profileDisplayPermission: "Permissão de exibição do perfil",
-                    showCountryFlag: "Exibir bandeira do país",
-                    genderCode: "Código de gênero",
-                    languageCode: "Código do idioma",
+                    gender: "Gênero",
+                    male: "Masculino",
+                    female: "Feminino",
                     friendsInCommon: "Amigos em comum",
                     followingCount: "Seguindo",
                     followersCount: "Seguidores",
@@ -714,6 +710,33 @@
             });
         }
 
+        function formatGender(value) {
+            if (value === undefined || value === null || value === '') return value;
+            const gender = String(value).trim().toLowerCase();
+            if (['1', 'male', 'm', 'man', '♂', '男'].includes(gender)) return '♂';
+            if (['2', 'female', 'f', 'woman', '♀', '女'].includes(gender)) return '♀';
+            return value;
+        }
+
+        function updateGenderBadge(value) {
+            const badge = document.getElementById('genderBadge');
+            const symbol = formatGender(value);
+            if (symbol !== '♂' && symbol !== '♀') {
+                badge.className = 'hidden text-base font-bold';
+                badge.textContent = '';
+                badge.removeAttribute('aria-label');
+                badge.removeAttribute('title');
+                return;
+            }
+
+            const label = symbol === '♂'
+                ? i18n[currentLang].capoFields.male
+                : i18n[currentLang].capoFields.female;
+            badge.className = `text-base font-bold ${symbol === '♂' ? 'text-blue-400' : 'text-pink-400'}`;
+            badge.textContent = symbol;
+            badge.setAttribute('aria-label', label);
+            badge.title = label;
+        }
 
         // Display only non-sensitive public/profile fields returned by Capo.
         // Passwords, device identifiers, contact details and IP addresses are not shown here.
@@ -728,21 +751,19 @@
             const relation = profile.relation || {};
             const permission = profile.permission || {};
             const labels = i18n[currentLang].capoFields;
+            updateGenderBadge(profile.gender);
 
             const fields = [
                 [labels.popularity, capoJson?.popularity],
                 [labels.closeUpload, capoJson?.close_upload],
                 [labels.closeMapUpload, capoJson?.close_upload_map],
-                [labels.countryCode, profile.country],
                 [labels.headFrameId, profile.head_frame_id],
                 [labels.headId, role.head_id],
                 [labels.modelCode, role.Model],
                 [labels.skinId, role.SkinID],
                 [labels.headUnlocked, profile.head_unlock],
                 [labels.profileDisplayPermission, permission.display],
-                [labels.showCountryFlag, profile.show_country],
-                [labels.genderCode, profile.gender],
-                [labels.languageCode, profile.lang],
+                [labels.gender, formatGender(profile.gender)],
                 [labels.friendsInCommon, relation.friend_eachother],
                 [labels.followingCount, relation.friend_attention],
                 [labels.followersCount, relation.friend_beattention],
@@ -766,7 +787,16 @@
                 labelNode.textContent = label;
 
                 const valueNode = document.createElement('div');
-                valueNode.className = 'text-amber-300 font-semibold break-words';
+                const isGenderIcon = label === labels.gender && (value === '♂' || value === '♀');
+                valueNode.className = isGenderIcon
+                    ? `font-semibold text-2xl ${value === '♂' ? 'text-blue-400' : 'text-pink-400'}`
+                    : 'text-amber-300 font-semibold break-words';
+                if (isGenderIcon) {
+                    valueNode.setAttribute(
+                        'aria-label',
+                        value === '♂' ? labels.male : labels.female
+                    );
+                }
                 valueNode.textContent = String(value);
 
                 card.append(labelNode, valueNode);
@@ -787,6 +817,7 @@
 
         function renderCapoError(message) {
             currentCapoJson = null;
+            updateGenderBadge(null);
             const container = document.getElementById('capoInfoContainer');
             const status = document.getElementById('capoStatus');
             container.replaceChildren();
@@ -803,6 +834,7 @@
             const loading = document.getElementById('loading');
             const dataContainer = document.getElementById('dataContainer');
             const errorMessage = document.getElementById('errorMessage');
+            updateGenderBadge(null);
 
             if (!uid) {
                 alert('Please enter a UID!');
