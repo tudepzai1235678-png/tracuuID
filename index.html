@@ -242,7 +242,7 @@
                 <div class="flex items-center justify-between border-b border-[#30363d] pb-2">
                     <h3 class="text-sm font-semibold text-amber-400 flex items-center gap-2">
                         <i class="fa-solid fa-circle-plus"></i>
-                        <span>Additional Profile Info</span>
+                        <span id="txt-additional-profile-info">Additional Profile Info</span>
                     </h3>
                     <span id="capoStatus" class="text-xs text-gray-400">Waiting...</span>
                 </div>
@@ -294,7 +294,31 @@
                 matList: "العناصر المفتوحة (Unlocked Items):",
                 rawJson: "عرض جميع بيانات الـ JSON الكاملة بدون استثناء",
                 secFriends: "قائمة الأصدقاء",
-                friendsEmpty: "لم تُرجع واجهة API قائمة الأصدقاء."
+                friendsEmpty: "لم تُرجع واجهة API قائمة الأصدقاء.",
+                additionalProfileInfo: "معلومات إضافية عن الملف الشخصي",
+                capoFields: {
+                    popularity: "الشعبية",
+                    closeUpload: "حالة إغلاق رفع المحتوى",
+                    closeMapUpload: "حالة إغلاق رفع الخريطة",
+                    countryCode: "رمز الدولة",
+                    headFrameId: "معرّف إطار الصورة الشخصية",
+                    headId: "معرّف الرأس",
+                    modelCode: "رمز النموذج",
+                    skinId: "معرّف المظهر",
+                    headUnlocked: "حالة فتح الرأس",
+                    profileDisplayPermission: "صلاحية عرض الملف الشخصي",
+                    showCountryFlag: "عرض علم الدولة",
+                    genderCode: "رمز الجنس",
+                    languageCode: "رمز اللغة",
+                    friendsInCommon: "الأصدقاء المشتركون",
+                    followingCount: "عدد المتابَعين",
+                    followersCount: "عدد المتابعين",
+                    downloadCount: "عدد مرات التنزيل",
+                    moodIconCode: "رمز أيقونة الحالة المزاجية",
+                    unlockedMaterialsCount: "عدد العناصر المفتوحة",
+                    lastDownloadTime: "وقت آخر تنزيل",
+                    profileTimestamp: "الطابع الزمني للملف الشخصي"
+                }
             },
             en: {
                 title: "Advanced Account JSON Explorer",
@@ -321,7 +345,31 @@
                 matList: "Unlocked Material List:",
                 rawJson: "View Complete Raw JSON Data",
                 secFriends: "Friends List",
-                friendsEmpty: "The API did not return a friends list."
+                friendsEmpty: "The API did not return a friends list.",
+                additionalProfileInfo: "Additional Profile Info",
+                capoFields: {
+                    popularity: "Popularity",
+                    closeUpload: "Close upload flag",
+                    closeMapUpload: "Close map upload flag",
+                    countryCode: "Country code",
+                    headFrameId: "Head frame ID",
+                    headId: "Head ID",
+                    modelCode: "Model code",
+                    skinId: "Skin ID",
+                    headUnlocked: "Head unlocked",
+                    profileDisplayPermission: "Profile display permission",
+                    showCountryFlag: "Show country flag",
+                    genderCode: "Gender code",
+                    languageCode: "Language code",
+                    friendsInCommon: "Friends in common",
+                    followingCount: "Following count",
+                    followersCount: "Followers count",
+                    downloadCount: "Download count",
+                    moodIconCode: "Mood icon code",
+                    unlockedMaterialsCount: "Unlocked materials count",
+                    lastDownloadTime: "Last download time",
+                    profileTimestamp: "Profile timestamp"
+                }
             },
             vi: {
                 title: "Trình Khám Phá JSON Tài Khoản Nâng Cao",
@@ -348,7 +396,31 @@
                 matList: "Vật phẩm đã mở khóa:",
                 rawJson: "Xem toàn bộ dữ liệu JSON thô",
                 secFriends: "Danh sách bạn bè",
-                friendsEmpty: "API không trả về danh sách bạn bè."
+                friendsEmpty: "API không trả về danh sách bạn bè.",
+                additionalProfileInfo: "Thông tin hồ sơ bổ sung",
+                capoFields: {
+                    popularity: "Độ phổ biến",
+                    closeUpload: "Trạng thái đóng tải lên",
+                    closeMapUpload: "Trạng thái đóng tải bản đồ",
+                    countryCode: "Mã quốc gia",
+                    headFrameId: "Mã khung đại diện",
+                    headId: "Mã đầu",
+                    modelCode: "Mã mẫu",
+                    skinId: "Mã trang phục",
+                    headUnlocked: "Trạng thái mở khóa kiểu đầu",
+                    profileDisplayPermission: "Quyền hiển thị hồ sơ",
+                    showCountryFlag: "Hiển thị cờ quốc gia",
+                    genderCode: "Mã giới tính",
+                    languageCode: "Mã ngôn ngữ",
+                    friendsInCommon: "Bạn chung",
+                    followingCount: "Số người đang theo dõi",
+                    followersCount: "Số người theo dõi",
+                    downloadCount: "Số lượt tải xuống",
+                    moodIconCode: "Mã biểu tượng trạng thái",
+                    unlockedMaterialsCount: "Số vật phẩm đã mở khóa",
+                    lastDownloadTime: "Thời gian tải xuống gần nhất",
+                    profileTimestamp: "Thời điểm hồ sơ"
+                }
             },
             zh: {
                 title: "高级账户 JSON 数据浏览器",
@@ -375,8 +447,32 @@
                 matList: "已解锁物品（Unlocked Items）：",
                 rawJson: "查看完整的原始 JSON 数据",
                 secFriends: "好友列表",
-                friendsEmpty: "API 未返回好友列表。"
-            }            ,
+                friendsEmpty: "API 未返回好友列表。",
+                additionalProfileInfo: "其他资料信息",
+                capoFields: {
+                    popularity: "人气值",
+                    closeUpload: "关闭上传标记",
+                    closeMapUpload: "关闭地图上传标记",
+                    countryCode: "国家/地区代码",
+                    headFrameId: "头像框 ID",
+                    headId: "头部 ID",
+                    modelCode: "模型代码",
+                    skinId: "皮肤 ID",
+                    headUnlocked: "头部是否已解锁",
+                    profileDisplayPermission: "资料显示权限",
+                    showCountryFlag: "显示国家/地区旗帜",
+                    genderCode: "性别代码",
+                    languageCode: "语言代码",
+                    friendsInCommon: "共同好友数",
+                    followingCount: "关注人数",
+                    followersCount: "粉丝数",
+                    downloadCount: "下载次数",
+                    moodIconCode: "心情图标代码",
+                    unlockedMaterialsCount: "已解锁物品数量",
+                    lastDownloadTime: "上次下载时间",
+                    profileTimestamp: "资料时间戳"
+                }
+            },
             "pt-BR": {
                 title: "Explorador Avançado de Dados JSON da Conta",
                 subtitle: "Consulte e organize os dados JSON da conta",
@@ -402,11 +498,36 @@
                 matList: "Itens desbloqueados:",
                 rawJson: "Ver todos os dados JSON originais",
                 secFriends: "Lista de amigos",
-                friendsEmpty: "A API não retornou uma lista de amigos."
+                friendsEmpty: "A API não retornou uma lista de amigos.",
+                additionalProfileInfo: "Informações adicionais do perfil",
+                capoFields: {
+                    popularity: "Popularidade",
+                    closeUpload: "Indicador de envio fechado",
+                    closeMapUpload: "Indicador de envio de mapas fechado",
+                    countryCode: "Código do país",
+                    headFrameId: "ID da moldura do avatar",
+                    headId: "ID da cabeça",
+                    modelCode: "Código do modelo",
+                    skinId: "ID da skin",
+                    headUnlocked: "Cabeça desbloqueada",
+                    profileDisplayPermission: "Permissão de exibição do perfil",
+                    showCountryFlag: "Exibir bandeira do país",
+                    genderCode: "Código de gênero",
+                    languageCode: "Código do idioma",
+                    friendsInCommon: "Amigos em comum",
+                    followingCount: "Seguindo",
+                    followersCount: "Seguidores",
+                    downloadCount: "Número de downloads",
+                    moodIconCode: "Código do ícone de humor",
+                    unlockedMaterialsCount: "Quantidade de itens desbloqueados",
+                    lastDownloadTime: "Data do último download",
+                    profileTimestamp: "Data e hora do perfil"
+                }
             }
         };
 
         let currentLang = 'ar';
+        let currentCapoJson = null;
 
         function setLanguage(lang) {
             currentLang = lang;
@@ -457,8 +578,10 @@
             document.getElementById('txt-mat-list').textContent = t.matList;
             document.getElementById('txt-raw-json').textContent = t.rawJson;
             document.getElementById('txt-sec-friends').textContent = t.secFriends;
+            document.getElementById('txt-additional-profile-info').textContent = t.additionalProfileInfo;
             const friendsEmptyLabel = document.getElementById('friendsEmpty');
             if (friendsEmptyLabel) friendsEmptyLabel.textContent = t.friendsEmpty;
+            if (currentCapoJson) renderCapoInfo(currentCapoJson);
         }
 
         // Convert Timestamp to readable Date
@@ -595,6 +718,7 @@
         // Display only non-sensitive public/profile fields returned by Capo.
         // Passwords, device identifiers, contact details and IP addresses are not shown here.
         function renderCapoInfo(capoJson) {
+            currentCapoJson = capoJson;
             const container = document.getElementById('capoInfoContainer');
             const status = document.getElementById('capoStatus');
             container.replaceChildren();
@@ -603,30 +727,31 @@
             const role = profile.RoleInfo || {};
             const relation = profile.relation || {};
             const permission = profile.permission || {};
+            const labels = i18n[currentLang].capoFields;
 
             const fields = [
-                ['Popularity', capoJson?.popularity],
-                ['Close upload flag', capoJson?.close_upload],
-                ['Close map upload flag', capoJson?.close_upload_map],
-                ['Country code', profile.country],
-                ['Head frame ID', profile.head_frame_id],
-                ['Head ID', role.head_id],
-                ['Model code', role.Model],
-                ['Skin ID', role.SkinID],
-                ['Head unlocked', profile.head_unlock],
-                ['Profile display permission', permission.display],
-                ['Show country flag', profile.show_country],
-                ['Gender code', profile.gender],
-                ['Language code', profile.lang],
-                ['Friends in common', relation.friend_eachother],
-                ['Following count', relation.friend_attention],
-                ['Followers count', relation.friend_beattention],
-                ['Download count', profile.all_download_count],
-                ['Mood icon code', profile.mood_icon],
-                ['Unlocked materials count', profile.mat_unlock_list && typeof profile.mat_unlock_list === 'object'
+                [labels.popularity, capoJson?.popularity],
+                [labels.closeUpload, capoJson?.close_upload],
+                [labels.closeMapUpload, capoJson?.close_upload_map],
+                [labels.countryCode, profile.country],
+                [labels.headFrameId, profile.head_frame_id],
+                [labels.headId, role.head_id],
+                [labels.modelCode, role.Model],
+                [labels.skinId, role.SkinID],
+                [labels.headUnlocked, profile.head_unlock],
+                [labels.profileDisplayPermission, permission.display],
+                [labels.showCountryFlag, profile.show_country],
+                [labels.genderCode, profile.gender],
+                [labels.languageCode, profile.lang],
+                [labels.friendsInCommon, relation.friend_eachother],
+                [labels.followingCount, relation.friend_attention],
+                [labels.followersCount, relation.friend_beattention],
+                [labels.downloadCount, profile.all_download_count],
+                [labels.moodIconCode, profile.mood_icon],
+                [labels.unlockedMaterialsCount, profile.mat_unlock_list && typeof profile.mat_unlock_list === 'object'
                     ? Object.keys(profile.mat_unlock_list).length : undefined],
-                ['Last download time', profile.all_download_st ? formatDate(profile.all_download_st) : undefined],
-                ['Profile timestamp', profile._t_ ? formatDate(profile._t_) : undefined]
+                [labels.lastDownloadTime, profile.all_download_st ? formatDate(profile.all_download_st) : undefined],
+                [labels.profileTimestamp, profile._t_ ? formatDate(profile._t_) : undefined]
             ];
 
             let shown = 0;
@@ -661,6 +786,7 @@
         }
 
         function renderCapoError(message) {
+            currentCapoJson = null;
             const container = document.getElementById('capoInfoContainer');
             const status = document.getElementById('capoStatus');
             container.replaceChildren();
